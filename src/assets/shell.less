@@ -1,0 +1,51 @@
+// Shell Layout - UI/UX PRO MAX
+// Defines the high-level page structure
+
+html, body, p, h1, h2, h3, h4, h5, h6, ul, li {
+  margin: 0;
+  padding: 0;
+}
+
+ul, li {
+  list-style: none;
+}
+
+.app-shell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: var(--color-bg-base);
+  color: var(--color-text-primary);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.app-header {
+  flex-shrink: 0;
+  z-index: 100;
+}
+
+.app-main {
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--header-height);
+  padding-bottom: var(--footer-height);
+}
+
+.app-footer {
+  flex-shrink: 0;
+  z-index: 100;
+}
+
+.content-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-4);
+  box-sizing: border-box;
+}

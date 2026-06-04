@@ -1,0 +1,65 @@
+// Header Component - UI/UX PRO MAX
+
+.btn-small {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--space-4);
+  height: var(--item-height-sm);
+  font-size: var(--text-body);
+  font-weight: 500;
+  background-color: transparent;
+  color: var(--color-text-primary);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-speed);
+  white-space: nowrap;
+  
+  &:hover {
+    background-color: var(--color-surface-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+  }
+  &:active {
+    transform: scale(0.98);
+    box-shadow: none;
+  }
+}
+
+.app-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-4);
+  background-color: var(--color-surface-l1);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color var(--transition-speed);
+
+  .header-title {
+    font-size: var(--text-heading);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .header-actions {
+    // Use global .btn-small styles
+  }
+}

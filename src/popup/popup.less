@@ -1,0 +1,673 @@
+@import "../assets/theme.less";
+@import "../assets/shell.less";
+@import "../assets/components/header.less";
+@import "../assets/components/footer.less";
+@import "../assets/components/scrollbar.less";
+@import "../assets/components/dropdown.less";
+
+/* 分頁列表區塊 */
+.popup-main-container {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: var(--space-4);
+  height: calc(100vh - 120px); // Adjust based on header/footer height
+
+  .left-column, .right-column {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding-right: var(--space-2);
+  }
+
+  .right-column {
+    .tab-section {
+      .section-header {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        background-color: var(--color-surface-l1);
+      }
+      .general-search-input {
+        position: sticky;
+        top: var(--item-height-sm);
+        z-index: 10;
+        background-color: var(--color-surface-l1);
+      }
+    }
+  }
+}
+
+/* ============================================
+   折疊/展開切換按鈕
+   ============================================ */
+.collapse-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  font-size: 10px;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-speed), background-color var(--transition-speed);
+  flex-shrink: 0;
+  user-select: none;
+
+  &:hover {
+    color: var(--color-text-primary);
+    background-color: var(--color-surface-hover);
+  }
+}
+
+/* ============================================
+   折疊/展開動畫容器：使用 CSS Grid 0fr→1fr 過渡
+   避免 height 動畫觸發全頁面 Reflow，效能更佳
+   ============================================ */
+.collapsible-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  contain: layout;
+  width: 100%;
+
+  @supports not (grid-template-rows: 1fr) {
+    transition: max-height 0.25s ease;
+    max-height: 0;
+
+    &.expanded {
+      max-height: 1000px;
+    }
+  }
+}
+
+.collapsible-inner {
+  min-height: 0;
+  width: 100%;
+  min-width: 0;
+}
+
+.tab-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--space-3);
+    margin-bottom: var(--space-1);
+    height: var(--item-height-sm);
+
+    .section-title {
+      font-size: var(--text-xs);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+
+      // .drag-handle styles archived
+    }
+
+    .section-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+
+      .custom-sort-picker {
+        position: relative;
+        display: inline-block;
+
+        .picker-trigger {
+          font-size: var(--text-xs);
+          color: var(--color-text-tertiary);
+          cursor: pointer;
+          padding: 0 4px;
+          transition: color var(--transition-speed);
+          display: flex;
+          align-items: center;
+          gap: 4px;
+
+          &:hover {
+            color: var(--color-text-primary);
+          }
+
+          &::after {
+            content: '▾';
+            font-size: 10px;
+            opacity: 0.7;
+          }
+        }
+
+        .picker-options {
+          .dropdown-menu();
+          overflow: hidden;
+
+          li {
+            padding: var(--space-1) var(--space-2);
+            font-size: var(--text-xs);
+            color: var(--color-text-tertiary);
+            cursor: pointer;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+
+    &:hover {
+      background-color: var(--color-surface-hover);
+      color: var(--color-text-primary);
+    }
+  }
+
+  .optimize-divider {
+    height: 1px;
+    margin: var(--space-1) 0;
+    background-color: var(--color-border);
+  }
+}
+      }
+
+      .section-sort-direction-btn {
+        font-size: var(--text-xs);
+        color: var(--color-text-tertiary);
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        outline: none;
+        padding: 0 4px;
+        line-height: 1;
+        transition: color var(--transition-speed);
+        &:hover {
+          color: var(--color-text-primary);
+        }
+      }
+    }
+  }
+
+  .tab-list {
+    display: flex;
+    flex-direction: column;
+
+    .tab-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      flex-shrink: 0;
+    }
+    gap: var(--space-2);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      height: var(--item-height-sm);
+      padding: 0 var(--space-3);
+      border-radius: var(--radius-md);
+      background-color: var(--color-surface-l2);
+      border: 1px solid var(--color-border);
+      cursor: pointer;
+      transition: background-color var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
+      contain: content;
+
+      // 選取勾選框
+      .tab-checkbox {
+        margin-right: var(--space-3);
+        width: var(--icon-sm);
+        height: var(--icon-sm);
+        cursor: pointer;
+      }
+
+      // 刪除按鈕
+      .btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: var(--icon-sm);
+        height: var(--icon-sm);
+        font-size: var(--text-body);
+        cursor: pointer;
+        color: var(--color-text-tertiary);
+        transition: color var(--transition-speed), background-color var(--transition-speed);
+        margin-right: var(--space-2);
+        &:hover {
+          color: var(--color-error);
+          background-color: var(--color-error-bg);
+          border-radius: var(--radius-sm);
+        }
+      }
+      // 分頁圖示
+      .icon {
+        display: block;
+        width: var(--icon-sm);
+        height: var(--icon-sm);
+        background-size: var(--icon-sm) var(--icon-sm);
+        margin-right: var(--space-2);
+        flex-shrink: 0;
+      }
+      // 分頁標題
+      .title {
+        flex: 1;
+        font-size: var(--text-body);
+        color: var(--color-text-primary);
+        text-decoration: none;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        cursor: pointer;
+        transition: color var(--transition-speed);
+        &:hover {
+          color: var(--color-primary);
+          text-decoration: none;
+        }
+      }
+
+      &:hover {
+        background-color: var(--color-surface-hover);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-sm);
+      }
+    }
+
+    // 分頁刪除狀態
+    li.removed {
+      opacity: 0.6;
+      background-color: transparent;
+      border-color: transparent;
+      .icon {
+        opacity: 0.4;
+      }
+      .title {
+        text-decoration: line-through;
+        opacity: 0.4;
+      }
+      &:hover {
+        transform: none;
+        box-shadow: none;
+      }
+    }
+
+    // 選取狀態
+    li.is-selected {
+      background-color: var(--color-primary-bg);
+      border-color: var(--color-primary);
+    }
+  }
+}
+
+/* ============================================
+   分頁移動選單 - 頂層選擇器（掛載到 document.body）
+   ============================================ */
+.move-menu {
+  .dropdown-menu(120px);
+
+  li {
+    padding: 6px var(--space-3);
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+    cursor: pointer;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &:hover {
+      background-color: var(--color-surface-hover);
+      color: var(--color-text-primary);
+    }
+
+    &.has-submenu::after {
+      content: '›';
+      font-size: 12px;
+      margin-left: var(--space-2);
+    }
+  }
+}
+
+/* ============================================
+   群組子選單 - 頂層選擇器（掛載到 document.body）
+   ============================================ */
+.group-submenu {
+  .dropdown-menu(150px, 1001, 0, none);
+  position: absolute !important;
+
+  li {
+    padding: 6px var(--space-3);
+    font-size: var(--text-xs);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-text-tertiary);
+    cursor: pointer;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+
+    &:hover {
+      background-color: var(--color-surface-hover);
+      color: var(--color-text-primary);
+    }
+
+    .group-color-dot {
+      width: var(--space-2);
+      height: var(--space-2);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+  }
+}
+
+/* 優化下拉選單容器 */
+.optimize-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.optimize-submenu {
+  .dropdown-menu(180px, 1000, 4px, none);
+  display: none;
+
+  .optimize-mode {
+    padding: 6px var(--space-3);
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+
+    &:hover {
+      background-color: var(--color-surface-hover);
+      color: var(--color-text-primary);
+    }
+  }
+}
+
+/* 搜尋輸入框 */
+.general-search-input {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-2);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface-l2);
+  color: var(--color-text-primary);
+  font-size: var(--text-body);
+  outline: none;
+  transition: border-color var(--transition-speed);
+  &:focus {
+    border-color: var(--color-primary);
+  }
+}
+
+/* ============================================
+   全局搜尋欄 - 置於右欄頂部，跨會話搜尋
+   ============================================ */
+.global-search-container {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--color-surface-l1);
+  border-bottom: 1px solid var(--color-border);
+
+  .global-search-input {
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-surface-l2);
+    color: var(--color-text-primary);
+    font-size: var(--text-body);
+    outline: none;
+    transition: border-color var(--transition-speed);
+
+    &::placeholder {
+      color: var(--color-text-quaternary);
+    }
+
+    &:focus {
+      border-color: var(--color-primary);
+    }
+  }
+}
+
+.load-more-btn {
+  display: block;
+  width: 100%;
+  padding: var(--space-3);
+  margin: var(--space-2) 0;
+  text-align: center;
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  background-color: transparent;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-speed);
+
+  &:hover {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    background-color: var(--color-primary-bg);
+  }
+}
+
+/* ============================================
+   會話區塊 (Session Block) - 兩層級結構
+   ============================================ */
+/* 排序下拉選單（body 級定位） */
+.picker-options {
+  .dropdown-menu(80px, 1000, 4px, null, fixed);
+  overflow: hidden;
+
+  li {
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+    cursor: pointer;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+
+    &:hover {
+      background-color: var(--color-surface-hover);
+      color: var(--color-text-primary);
+    }
+  }
+}
+
+.session-block {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-l2);
+  overflow: hidden;
+  transition: box-shadow var(--transition-speed);
+
+  &:hover {
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* 搜尋過濾時隱藏無匹配的會話區塊 */
+  &.search-hidden {
+    display: none;
+  }
+}
+
+/* 會話標題列 */
+.session-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--color-surface-l1);
+  border-bottom: 1px solid var(--color-border);
+  min-height: var(--item-height-sm);
+  gap: var(--space-2);
+}
+
+/* 會話資訊區（日期 + 分頁數） */
+.session-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 1;
+  min-width: 0;
+}
+
+.session-date {
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.session-meta {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  white-space: nowrap;
+}
+
+/* 會話操作按鈕區 */
+.session-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.session-advanced-btn {
+  padding: 2px var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--color-primary);
+  background-color: var(--color-primary-bg);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-speed);
+  white-space: nowrap;
+
+  &:hover,
+  .session-actions-dropdown:hover & {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+}
+
+/* 會話進階選單下拉 */
+.session-actions-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.session-actions-submenu {
+  .dropdown-menu(80px, 1000, 4px, none);
+
+  .session-action-item {
+    padding: 6px var(--space-3);
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+
+    &:hover {
+      background-color: var(--color-surface-hover);
+      color: var(--color-text-primary);
+    }
+  }
+}
+
+/* 會話區塊排序控制項 */
+.session-sort-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-shrink: 0;
+
+  .custom-sort-picker {
+    position: relative;
+    display: inline-block;
+
+    .picker-trigger {
+      font-size: var(--text-xs);
+      color: var(--color-text-tertiary);
+      cursor: pointer;
+      padding: 0 4px;
+      transition: color var(--transition-speed);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      &:hover {
+        color: var(--color-text-primary);
+      }
+
+      &::after {
+        content: '▾';
+        font-size: 10px;
+        opacity: 0.7;
+      }
+    }
+
+    .picker-options {
+      .dropdown-menu();
+      overflow: hidden;
+
+      li {
+        padding: var(--space-1) var(--space-2);
+        font-size: var(--text-xs);
+        color: var(--color-text-tertiary);
+        cursor: pointer;
+        transition: background-color var(--transition-speed), color var(--transition-speed);
+
+        &:hover {
+          background-color: var(--color-surface-hover);
+          color: var(--color-text-primary);
+        }
+      }
+    }
+  }
+
+  .section-sort-direction-btn {
+    font-size: var(--text-xs);
+    color: var(--color-text-tertiary);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    padding: 0 4px;
+    line-height: 1;
+    transition: color var(--transition-speed);
+
+    &:hover {
+      color: var(--color-text-primary);
+    }
+  }
+}
+
+/* 會話內的分頁列表（繼承 .tab-list 樣式，微調內邊距） */
+.session-block .tab-list {
+  padding: var(--space-2);
+
+  li {
+    /* 會話內分頁無需外邊框，由 session-block 提供 */
+    border: none;
+    background-color: transparent;
+
+    &:hover {
+      background-color: var(--color-surface-hover);
+    }
+  }
+}
+
+/* 會話區塊內無分頁時的提示 */
+.session-empty {
+  padding: var(--space-4);
+  text-align: center;
+  font-size: var(--text-xs);
+  color: var(--color-text-quaternary);
+}

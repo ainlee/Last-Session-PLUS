@@ -1,0 +1,33 @@
+// Footer Component - UI/UX PRO MAX
+
+.app-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-surface-l1);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--color-border);
+  transition: background-color var(--transition-speed);
+
+  .footer-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: var(--text-caption);
+    color: var(--color-text-tertiary);
+
+    #footer-info {
+      a {
+        color: var(--color-text-tertiary);
+        text-decoration: none;
+
+        &:hover {
+          color: var(--color-primary);
+        }
+      }
+    }
+  }
+}

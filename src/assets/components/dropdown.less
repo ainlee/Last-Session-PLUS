@@ -1,0 +1,34 @@
+// Dropdown Menu Mixin
+// 統一下拉選單的毛玻璃背景、邊框、陰影、間距
+// 避免 popup.less 與 options.less 中各組選單重複定義
+
+.dropdown-menu(@min-width: 80px, @z-index: 1000, @margin-top: 4px, @display: null, @position: absolute) {
+  position: @position;
+  top: 100%;
+  z-index: @z-index;
+  min-width: @min-width;
+  background-color: rgba(255, 255, 255, 0.8);
+
+  body.dark & {
+    background-color: rgb(27 41 60 / 90%);
+    backdrop-filter: blur(10px);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    body.system & {
+      background-color: rgb(27 41 60 / 90%);
+      backdrop-filter: blur(10px);
+    }
+  }
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  list-style: none;
+  padding: var(--space-1) 0;
+  margin: @margin-top 0 0 0;
+
+  & when not (@display = null) {
+    display: @display;
+  }
+}
